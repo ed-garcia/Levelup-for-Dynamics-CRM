@@ -84,7 +84,7 @@ chrome.runtime.onMessage.addListener(async function (
                       {
                         header: 'CallerObjectId',
                         operation: chrome.declarativeNetRequest.HeaderOperation.SET,
-                        value: userId,
+                        value: impersonationResponse.users[0].userId,
                       },
                     ],
                   },
@@ -103,6 +103,8 @@ chrome.runtime.onMessage.addListener(async function (
               renderBadge(impersonationResponse.impersonateRequest.url);
             }
           );
+          const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+          if (tab) chrome.tabs.reload(tab.id, { bypassCache: true });
         } else {
           chrome.declarativeNetRequest.getDynamicRules((rules) => {
             const ruleIds = rules.map((x) => x.id);
@@ -112,8 +114,6 @@ chrome.runtime.onMessage.addListener(async function (
           });
           chrome.storage.local.clear();
         }
-        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-        if (tab) chrome.tabs.reload(tab.id, { bypassCache: true });
         break;
     }
   } else if (message.type === 'reset') {

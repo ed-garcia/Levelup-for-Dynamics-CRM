@@ -23,7 +23,7 @@ chrome.runtime.sendMessage(
       .join('');
 
     document.getElementById('results').innerHTML = rows;
-
+    //@ts-ignore
     new List('grid', {
       valueNames: ['name', 'value'],
     });

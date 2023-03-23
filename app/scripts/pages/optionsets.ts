@@ -22,6 +22,7 @@ chrome.runtime.sendMessage(
       .join('');
     if (response.length > 0) {
       document.getElementById('results').innerHTML = rows;
+      //@ts-ignore
       new List('grid', {
         valueNames: ['name'],
       });
