@@ -6,7 +6,6 @@ import {
   ImpersonationStorage,
 } from './interfaces/types';
 
-let userId: string;
 let content: ExtensionMessageContent;
 
 chrome.runtime.onMessage.addListener(async function (
@@ -71,6 +70,13 @@ chrome.runtime.onMessage.addListener(async function (
           content: impersonationResponse.users,
         });
         if (impersonationResponse.impersonateRequest.isActive) {
+          chrome.storage.local.set({
+            [impersonationResponse.impersonateRequest.url]: <ImpersonationStorage>{
+              isImpersonationActive: impersonationResponse.impersonateRequest.isActive,
+              userName: impersonationResponse.impersonateRequest.userName,
+              userFullName: impersonationResponse.users[0].fullName,
+            },
+          });
           chrome.declarativeNetRequest.updateDynamicRules(
             {
               removeRuleIds: [1],
@@ -101,10 +107,10 @@ chrome.runtime.onMessage.addListener(async function (
             },
             async () => {
               renderBadge(impersonationResponse.impersonateRequest.url);
+              const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+              if (tab) chrome.tabs.reload(tab.id, { bypassCache: true });
             }
           );
-          const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-          if (tab) chrome.tabs.reload(tab.id, { bypassCache: true });
         } else {
           chrome.declarativeNetRequest.getDynamicRules((rules) => {
             const ruleIds = rules.map((x) => x.id);
