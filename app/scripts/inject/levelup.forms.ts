@@ -124,12 +124,7 @@ export class Forms {
       const locationUrl = `${
         this.utility.clientUrlForParams
       }etn=${this.utility.Xrm.Page.data.entity.getEntityName()}&id=${entityId}&newWindow=true&pagetype=entityrecord`;
-      try {
-        Utility.copy(locationUrl);
-        alert('Record URL has been copied to clipboard');
-      } catch (e) {
-        prompt('Ctrl+C to copy. OK to close.', locationUrl);
-      }
+      prompt('Ctrl+C to copy. OK to close.', locationUrl);
     } else {
       alert('This record has not been saved. Please save and run this command again');
     }
@@ -138,12 +133,7 @@ export class Forms {
   copyRecordId() {
     const entityId = this.utility.Xrm.Page.data.entity.getId().toLowerCase();
     if (entityId) {
-      try {
-        Utility.copy(entityId.substr(1, 36));
-        alert('Record Id has been copied to clipboard');
-      } catch (e) {
-        prompt('Ctrl+C to copy. OK to close.', entityId);
-      }
+      prompt('Ctrl+C to copy. OK to close.', entityId);
     } else {
       alert('This record has not been saved. Please save and run this command again');
     }

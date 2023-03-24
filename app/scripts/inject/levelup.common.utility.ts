@@ -148,16 +148,6 @@ export class Utility {
     });
   }
 
-  static copy(valueToCopy): void {
-    const t = document.createElement('input');
-    t.setAttribute('id', 'copy');
-    t.setAttribute('value', valueToCopy);
-    document.body.appendChild(t);
-    t.select();
-    document.execCommand('copy');
-    t.remove();
-  }
-
   async retrieveEnvironmentDetails() {
     // @ts-ignore
     const request = WebApiClient.Requests.RetrieveCurrentOrganizationRequest.with({
