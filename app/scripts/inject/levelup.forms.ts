@@ -24,21 +24,23 @@ export class Forms {
   displayLogicalNames() {
     this.utility.formDocument.querySelectorAll('.levelupschema').forEach((x) => x.remove());
 
-    const createSchemaNameInput = (controlName, controlNode) => {
+    const createSchemaNameInput = (controlName, controlNode, nodeType: 'field' | 'tab' | 'section') => {
       const schemaNameInput = this.utility.formDocument.createElement('input');
       schemaNameInput.setAttribute('type', 'text');
       schemaNameInput.setAttribute('class', 'levelupschema');
       schemaNameInput.setAttribute('style', 'background: darkslategray; color: #f9fcfe; font-size: 14px;');
       schemaNameInput.value = controlName;
       if (controlNode && controlNode.parentNode) {
-        controlNode.parentNode.insertBefore(schemaNameInput, controlNode);
+        if (nodeType === 'field')
+          controlNode.parentNode.parentNode.insertBefore(schemaNameInput, controlNode.parentNode);
+        else controlNode.parentNode.insertBefore(schemaNameInput, controlNode);
       }
     };
 
     this.utility.Xrm.Page.ui.controls.forEach((c: Xrm.Page.StandardControl) => {
       const controlName = c.getName();
       if (!c.getAttribute) {
-        createSchemaNameInput(controlName, this.utility.formDocument.getElementById(`${controlName}_d`));
+        createSchemaNameInput(controlName, this.utility.formDocument.getElementById(`${controlName}_d`), 'field');
       } else {
         const attributeName = c.getAttribute().getName(),
           controlNode =
@@ -53,7 +55,7 @@ export class Forms {
         if (!c.getVisible()) {
           return;
         }
-        createSchemaNameInput(attributeName, controlNode);
+        createSchemaNameInput(attributeName, controlNode, 'field');
       }
     });
 
@@ -63,7 +65,8 @@ export class Forms {
         createSchemaNameInput(
           tabName,
           this.utility.formDocument.querySelector(`div[name="${tabName}"]`) ||
-            this.utility.formDocument.querySelector(`li[data-id$="tablist-${tabName}"]`)
+            this.utility.formDocument.querySelector(`li[data-id$="tablist-${tabName}"]`),
+          'tab'
         );
       }
 
@@ -73,7 +76,8 @@ export class Forms {
           createSchemaNameInput(
             sectionName,
             this.utility.formDocument.querySelector(`table[name="${sectionName}"]`) ||
-              this.utility.formDocument.querySelector(`section[data-id$="${sectionName}"]`)
+              this.utility.formDocument.querySelector(`section[data-id$="${sectionName}"]`),
+            'section'
           );
         }
       });
